@@ -1,0 +1,104 @@
+Full name: Pham Xuan Huy
+Group: ICT 
+Subject: Information system
+
+
+REPORT #6: Subqueries
+
+
+------------------------------------------------------------------------------------------------------------------------------
+
+#1: Who have the same name as the managers of the “Finance”
+department?
+
+
+select a.first_name, a.last_name from employees a
+
+	join dept_emp b on a.emp_no=b.emp_no
+ 
+  	join (	select c.emp_no as eo, c.last_name as le, c.first_name as fne, d.dept_no as deo from employees c
+
+		join dept_emp d on c.emp_no=d.emp_no
+
+        	join dept_manager e on c.emp_no=e.emp_no
+		 
+	     ) as cde on a.emp_no=cde.eo
+	
+	where a.last_name=cde.le and a.first_name=cde.fne and b.dept_no=cde.deo 
+	
+	and b.dept_no in (select dept_no from departments where dept_name='Finance') 
+    
+	order by b.dept_no
+    
+	limit 0, 10;    
+
+# first_name, last_name
+Ebru, Alpin
+Isamu, Legleitner
+
+
+test:
+select * from dept_manager where dept_no = 'd002';
+select * from employees where emp_no in (110085, 110114);
+select * from employees where first_namr = 'Ebru' and last_name = 'Alpin';
+select * from employees where first_name = 'Isamu' and last_name = 'Legleitner';
+
+------------------------------------------------------------------------------------------------------------------------------
+
+#2: Who in the “Production” department were hired after the promotion of the last manager in that department?
+
+select  from dept_emp a join employees b on a.emp_no=b.emp_no
+  
+	where a.dept_no in (SELECT dept_no from departments where dept_name = 'Production')
+
+	    and b.hire_date > (select max(from_date) from dept_manager a join departments b on a.dept_no=b.dept_no
+ 
+				where b.dept_name = 'Production');
+
+
+# first_name, last_name
+Suzette, Pettey
+Zhenhua, Magalhaes
+Shaunak, Cullers
+...
+
+------------------------------------------------------------------------------------------------------------------------------
+
+#3: Find the average salary of each department, from highest to lowest.
+
+
+mysql> select de.dept_no, avg(avg_sal) from
+    ->          (select emp_no,  avg(salary) as avg_sal from salaries GROUP BY emp_no ) as ea
+    ->          join dept_emp de on ea.emp_no=de.emp_no
+    ->          group by de.dept_no;
++---------+----------------+
+| dept_no | avg(avg_sal)   |
++---------+----------------+
+| d001    | 69541.61771136 |
+| d002    | 68061.43501801 |
+| d003    | 53214.29085744 |
+| d004    | 57253.31382027 |
+
+------------------------------------------------------------------------------------------------------------------------------
+
+#4: Find the average salary for each type of Engineer, from highest to lowest.
+
+select t.title, avg(ea.avg_sal) Eng_average_sal FROM titles t
+	
+	join (select emp_no,  avg(salary) as avg_sal from salaries GROUP BY emp_no )
+		
+	as ea on t.emp_no=ea.emp_no
+	
+	where t.title in (select distinct title from titles where title like '%Engineer%')
+    
+	group by t.title;
+
+
+# title, Eng_average_sal
+Assistant Engineer, 56963.53043254
+Engineer, 57244.45845623
+Senior Engineer, 59144.76835191
+
+
+
+------------------------------------------------------------------------------------------------------------------------------

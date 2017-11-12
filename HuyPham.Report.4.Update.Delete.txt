@@ -1,0 +1,117 @@
+Full name: Huy Pham-Xuan
+Group: ICT
+course: Information System
+
+REPORT #4: UPDATE DELETE
+
+
+------------------------------------------------------------------------------------------------------------------------------
+#STEP 1: Check the foreign constraint on dept_no attribute on table: dept_manager, dept_departments and dept_emp in order to 
+	determine the order in which data can be updated in tables.
+
+
+mysql> SELECT a.TABLE_NAME, a.COLUMN_NAME, a.REFERENCED_TABLE_NAME, a.REFERENCED_COLUMN_NAME FROM   information_schema.KEY_COLUMN_USAGE a
+    -> WHERE
+    ->   REFERENCED_TABLE_NAME = 'departments'
+    ->   AND REFERENCED_COLUMN_NAME = 'dept_no'
+    ->   AND TABLE_SCHEMA = 'employees';
++--------------+-------------+-----------------------+------------------------+
+| TABLE_NAME   | COLUMN_NAME | REFERENCED_TABLE_NAME | REFERENCED_COLUMN_NAME |
++--------------+-------------+-----------------------+------------------------+
+| dept_emp     | dept_no     | departments           | dept_no                |
+| dept_man	ager | dept_no     | departments           | dept_no                |
++--------------+-------------+-----------------------+------------------------+
+2 rows in set (0.00 sec)+
+
+
+------------------------------------------------------------------------------------------------------------------------------
+#STEP 2: Back up before update
+
+a. Back up dept_emp
+
+mysql> create table dept_emp_bkp like dept_emp;
+Query OK, 0 rows affected (0.08 sec)
+mysql> insert into dept_emp_bkp
+    -> select * from dept_emp where dept_no in
+    ->          (select dept_no from departments where dept_name in ('Development', 'Research', 'Marketing', 'Sales'))
+    -> ;
+Query OK, 106833 rows affected (2.95 sec)
+Records: 106833  Duplicates: 0  Warnings: 0
+
+
+b. Back up dept_manager
+
+mysql> create table dept_manager_bkp like dept_manager;
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> insert into dept_manager_bkp
+    -> select * from dept_manager where dept_no in
+    ->           (select dept_no from departments where dept_name in ('Development','Research', 'Marketing', 'Sales')
+    -> );
+Query OK, 4 rows affected (0.01 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+------------------------------------------------------------------------------------------------------------------------------
+#STEP 3: Update data
+
+
+a. Update to_date to current date for current employees in 'Development','Research', 'Marketing', 'Sales' departments.
+
+mysql> update dept_emp set to_date = curdate() where dept_no  in ('d001', 'd007', 'd005', 'd008') and to_date = '9999-01-01';
+Query OK, 129370 rows affected (1.44 sec)
+Rows matched: 129370  Changed: 129370  Warnings: 0
+
+
+b. Update to_date to current date for current manager of 'Development','Research', 'Marketing', 'Sales' departments.
+
+mysql> update dept_manager set to_date = curdate() where dept_no  in ('d001', 'd007', 'd005', 'd008') and to_date = '9999-01-01';
+Query OK, 4 rows affected (0.01 sec)
+Rows matched: 4  Changed: 4  Warnings: 0
+
+
+------------------------------------------------------------------------------------------------------------------------------
+
+#STEP 4: Insert data
+
+a. Insert new departments to table departments
+
+insert into departments values ('d010', 'Research and development'), ('d011', 'Marketing and Sales');
+
+
+b. insert new managers of new departments when two department merge
+
+mysql> insert into dept_manager select emp_no, 'd010', curdate(), '9999-01-01' from dept_manager_bkp
+    ->          where dept_no in ('d005', 'd008') and to_date='9999-01-01';
+Query OK, 2 rows affected (0.01 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> insert into dept_manager select emp_no, 'd011', curdate(), '9999-01-01' from dept_manager_bkp
+    ->          where dept_no in ('d001', 'd007') and to_date='9999-01-01';
+Query OK, 2 rows affected (0.01 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+
+c. Insert employees of new departments when two department merge
+
+mysql> insert into dept_emp
+    ->  select emp_no, 'd010', curdate(), '9999-01-01' from dept_emp_bkp
+    ->  where dept_no in ('d005', 'd008') and to_date = '9999-01-01';
+Query OK, 76827 rows affected (4.42 sec)
+Records: 76827  Duplicates: 0  Warnings: 0
+
+mysql> insert into dept_emp
+    ->  select emp_no, 'd011', curdate(), '9999-01-01' from dept_emp_bkp
+    ->  where dept_no in ('d001', 'd007') and to_date = '9999-01-01';
+Query OK, 52543 rows affected (4.16 sec)
+Records: 52543  Duplicates: 0  Warnings: 0
+
+------------------------------------------------------------------------------------------------------------------------------
+END
+
+
+
+
+
+
+
+
