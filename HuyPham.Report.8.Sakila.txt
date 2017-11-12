@@ -1,0 +1,186 @@
+Full name: Pham Xuan Huy
+Group: ICT 
+Subject: Information system
+
+REPORT #8: SAKILA
+
+
+------------------------------------------------------------------------------------------------------------------------------
+#1: List names of all the languages in the database (sorted alphabetically)?
+
+mysql> select * from language order by name;
++-------------+----------+---------------------+
+| language_id | name     | last_update         |
++-------------+----------+---------------------+
+|           1 | English  | 2006-02-15 05:02:19 |
+|           5 | French   | 2006-02-15 05:02:19 |
+|           6 | German   | 2006-02-15 05:02:19 |
+|           2 | Italian  | 2006-02-15 05:02:19 |
+|           3 | Japanese | 2006-02-15 05:02:19 |
+|           4 | Mandarin | 2006-02-15 05:02:19 |
++-------------+----------+---------------------+
+6 rows in set (0.00 sec)
+
+
+------------------------------------------------------------------------------------------------------------------------------
+#2: List full names of actors with "GER" in their last name, ordered by their first name
+
+mysql> select * from actor where first_name like '%GER%' or last_name like '%GER%' order by first_name;
++----------+------------+-----------+---------------------+
+| actor_id | first_name | last_name | last_update         |
++----------+------------+-----------+---------------------+
+|      111 | CAMERON    | ZELLWEGER | 2006-02-15 04:34:33 |
+|      186 | JULIA      | ZELLWEGER | 2006-02-15 04:34:33 |
+|      185 | MICHAEL    | BOLGER    | 2006-02-15 04:34:33 |
+|       85 | MINNIE     | ZELLWEGER | 2006-02-15 04:34:33 |
+|       37 | VAL        | BOLGER    | 2006-02-15 04:34:33 |
+|      158 | VIVIEN     | BASINGER  | 2006-02-15 04:34:33 |
++----------+------------+-----------+---------------------+
+6 rows in set (0.00 sec)
+
+
+------------------------------------------------------------------------------------------------------------------------------
+#3: Find all the addresses where postal code starts with "57", and return addresses sorted.
+
+mysql> select * from address where postal_code like '57%' order by address;
++------------+-----------------------------------+----------+------------------+---------+-------------+--------------+---------------------------+---------------------+
+| address_id | address                           | address2 | district         | city_id | postal_code | phone        | location                  | last_update         |
++------------+-----------------------------------+----------+------------------+---------+-------------+--------------+---------------------------+---------------------+
+|        143 | 1029 Dzerzinsk Manor              |          | Ynlin            |     542 | 57519       | 33173584456  |                         | 2014-09-25 22:33:16 |
+|        376 | 1061 Ede Avenue                   |          | Southern Tagalog |      98 | 57810       | 333390595558 |                         | 2014-09-25 22:32:35 |
+|        167 | 1287 Xiangfan Boulevard           |          | Gifu             |     253 | 57844       | 819416131190 |        jÕË+@üAÊºUÁA@ | 2014-09-25 22:31:48 |
+|        252 | 1309 Weifang Street               |          | Florida          |     520 | 57338       | 435785045362 |        ý°í¸U+ÖZ d2p>@ | 2014-09-25 22:34:02 |
+|        502 | 1515 Korla Way                    |          | England          |     589 | 57197       | 959467760895 |        LBÏ¯+R±+¦ém-ô·J@ | 2014-09-25 22:33:42 |
+|         59 | 1697 Kowloon and New Kowloon Loop |          | Moskova          |      49 | 57807       | 499352017190 |                         | 2014-09-25 22:32:47 |
+|        444 | 231 Kaliningrad Place             |          | Lombardia        |      70 | 57833       | 575081026569 |        zZØ£U#@º~9+F@ | 2014-09-25 22:31:42 |
+|        552 | 390 Wroclaw Way                   |          | Hainan           |     462 | 5753        | 357593328658 |        ¸ÏïW`[@6NTÇ9>2@ | 2014-09-25 22:30:41 |
+|        338 | 431 Szkesfehrvr Avenue            |          | Baki             |      48 | 57828       | 119501405123 |        ºvå®-=H@«-¤W0D@ | 2014-09-25 22:30:11 |
+|        308 | 687 Alessandria Parkway           |          | Sanaa            |     455 | 57587       | 407218522294 |        `%ztF@àJ:×Á.@ | 2014-09-25 22:34:10 |
+éärýÛÊJ@ | 2014-09-25 22:33:40 |                 |          | England          |     496 | 57380       | 590764256785 |        ëO­F
++------------+-----------------------------------+----------+------------------+---------+-------------+--------------+---------------------------+---------------------+
+11 rows in set (0.00 sec)
+
+
+------------------------------------------------------------------------------------------------------------------------------
+#4: How many films involve a "DWARF" in their titles?
+
+mysql> select 'FilmDWARF' , count(film_id) from film
+    ->  where title like '%DWARF%' ;
++-----------+----------------+
+| FilmDWARF | count(film_id) |
++-----------+----------------+
+| FilmDWARF |              2 |
++-----------+----------------+
+1 row in set (0.00 sec)
+
+
+------------------------------------------------------------------------------------------------------------------------------
+#5: Find full names of actors who played in a film involving ’WAR’ in title and longer than 2.5 hours, along with the title, 
+run length and release year of the movie, sorted by the actors’ last names
+
+mysql> select concat(a.first_name, ' ', a.last_name) as ActorFullname, c.title, c.length, c.release_year from  actor a
+    ->  join  film_actor b on a.actor_id=b.actor_id
+    ->     join film c on b.film_id=c.film_id
+    ->     where c.title like '%WAR%' and c.length > 150;
+
++-------------------+---------------------+--------+--------------+
+| ActorFullname     | title               | length | release_year |
++-------------------+---------------------+--------+--------------+
+| JULIA MCQUEEN     | GLADIATOR WESTWARD  |    173 |         2006 |
+| KIRK JOVOVICH     | GLADIATOR WESTWARD  |    173 |         2006 |
+| ADAM GRANT        | GLADIATOR WESTWARD  |    173 |         2006 |
+| CAMERON ZELLWEGER | GLADIATOR WESTWARD  |    173 |         2006 |
+| IAN TANDY         | GLADIATOR WESTWARD  |    173 |         2006 |
+| JAYNE SILVERSTONE | GLADIATOR WESTWARD  |    173 |         2006 |
+| KARL BERRY        | LEATHERNECKS DWARFS |    153 |         2006 |
+| UMA WOOD          | LEATHERNECKS DWARFS |    153 |         2006 |
+
+
+
+------------------------------------------------------------------------------------------------------------------------------
+#6: Find all the film categories in which there are between 55 and 65 films. Return the names of these categories 
+and the number of films per category, sorted by the number of films descending.
+
+
+mysql> select a.name, count(c.film_id) NoFilm from category a
+    ->  join film_category b on a.category_id = b.category_id
+    ->     join film c on b.film_id = c.film_id
+    ->     group by a.category_id having(NoFilm >= 55 and NoFilm <=65)
+    ->     ;
++----------+--------+
+| name     | NoFilm |
++----------+--------+
+| Action   |     64 |
+| Children |     60 |
+| Classics |     57 |
+| Comedy   |     58 |
+| Drama    |     62 |
+| Games    |     61 |
+| Horror   |     56 |
+| New      |     63 |
+| Sci-Fi   |     61 |
+| Travel   |     57 |
++----------+--------+
+10 rows in set (0.00 sec)
+
+------------------------------------------------------------------------------------------------------------------------------
+#7: In how many film categories is the average difference between the film replacement cost and the rental 
+rate larger than 17?
+
+mysql> select count(*) from
+    ->     (select a.name, avg(c.replacement_cost - c.rental_rate) avgRR FROM category a
+    ->  join film_category b on a.category_id=b.category_id
+    ->          join film c on b.film_id=c.film_id
+    ->          group by a.name having(avgRR > 17)
+    ->  ) as aaaa;
++----------+
+| count(*) |
++----------+
+|        8 |
++----------+
+1 row in set (0.01 sec)
+
+
+select a.name, avg(c.replacement_cost - c.rental_rate) avgRR FROM category a 
+    join film_category b on a.category_id=b.category_id
+    join film c on b.film_id=c.film_id
+    group by a.name having(avgRR > 17);
+	
+
+# name, avgRR
+Action, 18.265625
+Animation, 17.318182
+Children, 17.166667
+Classics, 18.263158
+Drama, 18.064516
+Games, 17.032787
+Sci-Fi, 17.934426
+Sports, 17.270270
+
+
+------------------------------------------------------------------------------------------------------------------------------
+#8: Find the address district(s) name(s) such that the minimal postal code in the district(s) is maximal over all the districts.
+Make sure your query ignores empty postal codes and district names.
+
+Not able to understand the question.
+
+
+------------------------------------------------------------------------------------------------------------------------------
+#9: Find the names (first and last) of all the actors and customers whose first name is the same as the first name of the actor
+with ID 101 (exclude the actor with ID 101).
+
+select first_name, last_name from actor 
+	where first_name = (select first_name from actor where actor_id = 101 )
+    	and actor_id != 101
+union
+select first_name, last_name from customer 
+	where first_name = (select first_name from actor where actor_id = 101 ) 
+    ;   
+
+# first_name, last_name
+SUSAN, DAVIS
+SUSAN, WILSON
+
+
+------------------------------------------------------------------------------------------------------------------------------
+END
