@@ -1,0 +1,48 @@
+Full name: Pham Xuan Huy
+Group: ICT 
+Subject: Information system
+
+REPORT #9: NORM
+
+
+
+------------------------------------------------------------------------------------------------------------------------------
+#1: Which normal form does the employee database satisfy?
+
+It satisies the first normalization form as: 
+	+ Information stored in reational database - set of tables in a scema
+	+ Each column contians atomic vale - there is not any column with compound data
+	+ No repeated column
+
+It also satisfies the second normalization form as each non-key colum depends on the primary keys.
+
+As non-key columns in tables, which are dependant to key columns are non-transitive, hence it satisfies the third 
+normalization form.
+
+Employees database satisfy third norm normal form.
+
+
+------------------------------------------------------------------------------------------------------------------------------
+
+#2: Normalize the order form
+
+step 1: Split the order number, order date to a table. Set order ID as the primary key of the table
+
+step 2: Split customer name and customer phone to a table. Set customer ID as the primary key for the table.
+
+Step 3: Create address table, split street number (18) and street/road name into two saparated columns. Add district, 
+	city ID and country ID columns and set address ID as primary key for the table.
+
+Step 4: Create city table with two attrbutes, city name column and city ID. Set city ID as the primary key.
+
+step 5: Create country table with country name and countnry ID. Country ID will be the primary key.
+
+Step 6: Create item table with ProdID as primary key. There are two more columns in the table, including decription and price.
+
+Step 7: Create table Order Item with order ID, ProdID and quantity column. Primary key of the table is the coumpound of order
+ 	ID and ProdID.
+
+Step 8: Set suitable foreign key constraints among tables.
+
+
+------------------------------------------------------------------------------------------------------------------------------
